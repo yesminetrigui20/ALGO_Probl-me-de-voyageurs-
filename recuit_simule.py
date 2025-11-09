@@ -1,75 +1,57 @@
 
+
 import random
 import math
-import matplotlib.pyplot as plt
 from utils import calculer_distance
 
+def recuit_simule(matrice_distances,
+                  temperature_initiale=1000,
+                  temperature_finale=1,
+                  alpha=0.95,
+                  iterations_par_temperature=100,
+                  afficher_graphique=False,
+                  callback=None):
 
-def recuit_simule(
-        matrice,
-        temperature_initiale=1000,
-        temperature_finale=1,
-        alpha=0.95,
-        iterations_par_temperature=100,
-        afficher_graphique=True,
-        callback=None
-):
-    """Algorithme de recuit simulé pour le TSP"""
-    nb_villes = len(matrice)
-
-    chemin_actuel = random.sample(range(nb_villes), nb_villes)
-    distance_actuelle = calculer_distance(chemin_actuel, matrice)
+    n_villes = len(matrice_distances)
+    # Chemin initial aléatoire
+    chemin = list(range(n_villes))
+    random.shuffle(chemin)
+    distance_actuelle = calculer_distance(chemin, matrice_distances)
     distance_initiale = distance_actuelle
 
-    meilleur_chemin = chemin_actuel[:]
+    meilleur_chemin = chemin.copy()
     meilleure_distance = distance_actuelle
 
     temperature = temperature_initiale
-    historique = []
-    iteration_globale = 0
-
-    if not callback:
-        print(f" Recuit Simulé - Distance initiale: {distance_initiale:.2f}")
+    historique = [distance_actuelle]
+    iteration_totale = 0
 
     while temperature > temperature_finale:
         for _ in range(iterations_par_temperature):
-            nouveau_chemin = chemin_actuel[:]
-            i, j = random.sample(range(nb_villes), 2)
-            nouveau_chemin[i], nouveau_chemin[j] = nouveau_chemin[j], nouveau_chemin[i]
+            # Générer voisin par swap de 2 villes
+            i, j = random.sample(range(n_villes), 2)
+            voisin = chemin.copy()
+            voisin[i], voisin[j] = voisin[j], voisin[i]
+            distance_voisin = calculer_distance(voisin, matrice_distances)
 
-            nouvelle_distance = calculer_distance(nouveau_chemin, matrice)
-            delta = nouvelle_distance - distance_actuelle
+            delta = distance_voisin - distance_actuelle
 
             if delta < 0 or random.random() < math.exp(-delta / temperature):
-                chemin_actuel = nouveau_chemin
-                distance_actuelle = nouvelle_distance
+                chemin = voisin
+                distance_actuelle = distance_voisin
 
+                # Mise à jour du meilleur
                 if distance_actuelle < meilleure_distance:
-                    meilleur_chemin = chemin_actuel[:]
+                    meilleur_chemin = chemin.copy()
                     meilleure_distance = distance_actuelle
 
-            historique.append(meilleure_distance)
-            iteration_globale += 1
+            historique.append(distance_actuelle)
+            iteration_totale += 1
 
-            if callback and iteration_globale % 10 == 0:
-                callback(iteration_globale, meilleur_chemin, meilleure_distance, historique, temperature)
-
-        if not callback and iteration_globale % 1000 == 0:
-            print(
-                f" Itération {iteration_globale} | Température: {temperature:.2f} | Meilleure distance: {meilleure_distance:.2f}")
+            # Appel du callback pour la simulation interactive
+            if callback:
+                callback(iteration_totale, chemin, distance_actuelle, historique, temperature)
 
         temperature *= alpha
-
-    if not callback:
-        print(f" Recuit Simulé terminé - Distance finale: {meilleure_distance:.2f}")
-
-    if afficher_graphique and not callback:
-        plt.figure(figsize=(10, 6))
-        plt.plot(historique, linewidth=1, alpha=0.7)
-        plt.title("Recuit Simulé - Évolution de la meilleure distance", fontsize=14)
-        plt.xlabel("Itération", fontsize=12)
-        plt.ylabel("Distance minimale", fontsize=12)
-        plt.grid(True, alpha=0.3)
-        plt.show()
 
     return meilleur_chemin, meilleure_distance, distance_initiale, historique

@@ -1,121 +1,40 @@
-
 import matplotlib.pyplot as plt
 from algo_genetique import algorithme_genetique_tsp
 from recuit_simule import recuit_simule
 
-
 def comparer_algorithmes(matrice):
-    """
-    Compare l'algorithme génétique et le recuit simulé
-    """
+
     print("=" * 80)
-    print("COMPARAISON DES ALGORITHMES - PROBLÈME DU VOYAGEUR DE COMMERCE")
+    print("COMPARAISON DES ALGORITHMES - TSP")
     print("=" * 80)
 
-    #  1. Algorithme Génétique - Sélection Roulette - Croisement 1 point
-    print("\n  ALGORITHME GÉNÉTIQUE - Roulette + Croisement 1 point")
-    print("-" * 80)
-    sol_ag1, dist_ag1, init_ag1, hist_ag1 = algorithme_genetique_tsp(
-        matrice,
-        generations=200,
-        taille_population=50,
-        methode_selection="roulette",
-        methode_croisement="1point",
-        proba_croisement=0.8,
-        proba_mutation=0.05,
-        afficher_graphique=False
-    )
-    print(f" Chemin trouvé: {sol_ag1}")
-    print(f" Distance initiale: {init_ag1:.2f}")
-    print(f" Distance finale: {dist_ag1:.2f}")
+    # Configurations AG à tester
+    selections = ["roulette", "rang"]
+    croisements = ["1point", "2points", "uniforme"]
 
-    #  2. Algorithme Génétique - Sélection Roulette - Croisement 2 points
-    print("\n  ALGORITHME GÉNÉTIQUE - Roulette + Croisement 2 points")
-    print("-" * 80)
-    sol_ag2, dist_ag2, init_ag2, hist_ag2 = algorithme_genetique_tsp(
-        matrice,
-        generations=200,
-        taille_population=50,
-        methode_selection="roulette",
-        methode_croisement="2points",
-        proba_croisement=0.8,
-        proba_mutation=0.05,
-        afficher_graphique=False
-    )
-    print(f" Chemin trouvé: {sol_ag2}")
-    print(f" Distance initiale: {init_ag2:.2f}")
-    print(f" Distance finale: {dist_ag2:.2f}")
+    resultats = []
 
-    #  3. Algorithme Génétique - Sélection Roulette - Croisement Uniforme
-    print("\n ALGORITHME GÉNÉTIQUE - Roulette + Croisement Uniforme")
-    print("-" * 80)
-    sol_ag3, dist_ag3, init_ag3, hist_ag3 = algorithme_genetique_tsp(
-        matrice,
-        generations=200,
-        taille_population=50,
-        methode_selection="roulette",
-        methode_croisement="uniforme",
-        proba_croisement=0.8,
-        proba_mutation=0.05,
-        afficher_graphique=False
-    )
-    print(f" Chemin trouvé: {sol_ag3}")
-    print(f" Distance initiale: {init_ag3:.2f}")
-    print(f" Distance finale: {dist_ag3:.2f}")
+    for sel in selections:
+        for crois in croisements:
+            print(f"\nALGO GENETIQUE - {sel.capitalize()} + {crois.capitalize()}")
+            print("-" * 80)
+            sol, dist, dist_init, hist = algorithme_genetique_tsp(
+                matrice,
+                generations=200,
+                taille_population=50,
+                methode_selection=sel,
+                methode_croisement=crois,
+                proba_croisement=0.8,
+                proba_mutation=0.05,
+                afficher_graphique=False
+            )
+            print(f" Chemin trouvé: {sol}")
+            print(f" Distance initiale: {dist_init:.2f}")
+            print(f" Distance finale: {dist:.2f}")
+            resultats.append((f"AG - {sel.capitalize()} + {crois.capitalize()}", dist, hist))
 
-    #  4. Algorithme Génétique - Sélection Rang - Croisement 1 point
-    print("\n  ALGORITHME GÉNÉTIQUE - Rang + Croisement 1 point")
-    print("-" * 80)
-    sol_ag4, dist_ag4, init_ag4, hist_ag4 = algorithme_genetique_tsp(
-        matrice,
-        generations=200,
-        taille_population=50,
-        methode_selection="rang",
-        methode_croisement="1point",
-        proba_croisement=0.8,
-        proba_mutation=0.05,
-        afficher_graphique=False
-    )
-    print(f" Chemin trouvé: {sol_ag4}")
-    print(f" Distance initiale: {init_ag4:.2f}")
-    print(f"Distance finale: {dist_ag4:.2f}")
-
-    # 🔹 5. Algorithme Génétique - Sélection Rang - Croisement 2 points
-    print("\n  ALGORITHME GÉNÉTIQUE - Rang + Croisement 2 points")
-    print("-" * 80)
-    sol_ag5, dist_ag5, init_ag5, hist_ag5 = algorithme_genetique_tsp(
-        matrice,
-        generations=200,
-        taille_population=50,
-        methode_selection="rang",
-        methode_croisement="2points",
-        proba_croisement=0.8,
-        proba_mutation=0.05,
-        afficher_graphique=False
-    )
-    print(f" Chemin trouvé: {sol_ag5}")
-    print(f" Distance initiale: {init_ag5:.2f}")
-    print(f" Distance finale: {dist_ag5:.2f}")
-
-    # 🔹 6. Algorithme Génétique - Sélection Rang - Croisement Uniforme
-    print("\n⃣  ALGORITHME GÉNÉTIQUE - Rang + Croisement Uniforme")
-    print("-" * 80)
-    sol_ag6, dist_ag6, init_ag6, hist_ag6 = algorithme_genetique_tsp(
-        matrice,
-        generations=200,
-        taille_population=50,
-        methode_selection="rang",
-        methode_croisement="uniforme",
-        proba_croisement=0.8,
-        proba_mutation=0.05,
-        afficher_graphique=False
-    )
-    print(f" Chemin trouvé: {sol_ag6}")
-    print(f" Distance initiale: {init_ag6:.2f}")
-    print(f" Distance finale: {dist_ag6:.2f}")
-
-    # 🔹 7. Recuit Simulé
-    print("\n RECUIT SIMULÉ")
+    # Recuit simulé
+    print("\nRECUIT SIMULÉ")
     print("-" * 80)
     sol_rs, dist_rs, init_rs, hist_rs = recuit_simule(
         matrice,
@@ -125,22 +44,17 @@ def comparer_algorithmes(matrice):
         iterations_par_temperature=100,
         afficher_graphique=False
     )
-    print(f"Chemin trouvé: {sol_rs}")
+    print(f" Chemin trouvé: {sol_rs}")
     print(f" Distance initiale: {init_rs:.2f}")
-    print(f"Distance finale: {dist_rs:.2f}")
+    print(f" Distance finale: {dist_rs:.2f}")
+    resultats.append(("Recuit Simulé", dist_rs, hist_rs))
 
-    # 🔸 Graphique comparatif
-    print("\n Génération du graphique comparatif...")
+    # 🔹 Graphique comparatif
     plt.figure(figsize=(14, 8))
+    for nom, _, hist in resultats[:-1]:  # AG
+        plt.plot(hist, label=nom, linewidth=2)
 
-    plt.plot(hist_ag1, label="AG - Roulette + 1 point", linewidth=2)
-    plt.plot(hist_ag2, label="AG - Roulette + 2 points", linewidth=2)
-    plt.plot(hist_ag3, label="AG - Roulette + Uniforme", linewidth=2)
-    plt.plot(hist_ag4, label="AG - Rang + 1 point", linewidth=2)
-    plt.plot(hist_ag5, label="AG - Rang + 2 points", linewidth=2)
-    plt.plot(hist_ag6, label="AG - Rang + Uniforme", linewidth=2)
-
-    # Adapter l'axe X pour le recuit simulé (beaucoup plus d'itérations)
+    # Recuit simulé (normaliser X)
     x_rs = [i * (200 / len(hist_rs)) for i in range(len(hist_rs))]
     plt.plot(x_rs, hist_rs, label="Recuit Simulé", linewidth=2, linestyle='--')
 
@@ -152,29 +66,19 @@ def comparer_algorithmes(matrice):
     plt.tight_layout()
     plt.show()
 
-    # 🔸 Tableau récapitulatif
+    # 🔹 Tableau récapitulatif
     print("\n" + "=" * 80)
     print("TABLEAU RÉCAPITULATIF")
     print("=" * 80)
-    resultats = [
-        ("AG - Roulette + 1 point", dist_ag1),
-        ("AG - Roulette + 2 points", dist_ag2),
-        ("AG - Roulette + Uniforme", dist_ag3),
-        ("AG - Rang + 1 point", dist_ag4),
-        ("AG - Rang + 2 points", dist_ag5),
-        ("AG - Rang + Uniforme", dist_ag6),
-        ("Recuit Simulé", dist_rs)
-    ]
-
-    resultats.sort(key=lambda x: x[1])
+    resultats_table = [(nom, dist) for nom, dist, _ in resultats]
+    resultats_table.sort(key=lambda x: x[1])
     print(f"\n{'Rang':<5} {'Algorithme':<30} {'Distance':<10}")
     print("-" * 80)
-    for i, (nom, distance) in enumerate(resultats, 1):
+    for i, (nom, distance) in enumerate(resultats_table, 1):
         print(f"{i:<5} {nom:<30} {distance:<10.2f}")
 
-
 if __name__ == "__main__":
-    # Matrice de distances - 10 villes
+    # Matrice de distances exemple (10 villes)
     matrice_10_villes = [
         [0, 29, 20, 21, 16, 31, 100, 12, 4, 31],
         [29, 0, 15, 29, 28, 40, 72, 21, 29, 27],
@@ -188,5 +92,4 @@ if __name__ == "__main__":
         [31, 27, 30, 16, 22, 14, 95, 18, 25, 0]
     ]
 
-    # Lancer la comparaison
     comparer_algorithmes(matrice_10_villes)

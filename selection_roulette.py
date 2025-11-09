@@ -1,9 +1,8 @@
-
 import random
 from utils import aptitude
 
 def selection_par_roulette(population, matrice):
-    """Sélection par roulette biaisée"""
+    """Sélection par roulette """
     total_aptitude = sum(aptitude(ind, matrice) for ind in population)
     tirage = random.uniform(0, total_aptitude)
     cumul = 0
